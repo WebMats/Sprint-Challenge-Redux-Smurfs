@@ -1,7 +1,21 @@
+import axios from '../axios-smurfs';
 /* 
   Action Types Go Here!
   Be sure to export each action type so you can pull it into your reducer
 */
+export const actionTypes = {
+  FETCHING_SMURFS: "FETCHING_SMURFS",
+  FETCH_SUCCEEDED: "FETCH_SUCCEEDED",
+  FETCH_FAILED: "FETCH_FAILED",
+  ADDING_SMURF: "ADDING_SMURF",
+  ADD_SUCCEEDED: "ADD_SUCCEEDED",
+  ADD_FAILED: "ADD_FAILED",
+  DELETE_SUCCEEDED: "DELETE_SUCCEEDED",
+  DELETE_FAILED: "DELETE_FAILED",
+  UPDATING_SMURFS: "UPDATING_SMURFS",
+  UPDATE_SUCCEEDED: "UPDATE_SUCCEEDED",
+  UPDATE_FAIL: "UPDATE_FAIL"
+}
 
 /*
   For this project you'll need at least 2 action creators for the main portion,
@@ -13,3 +27,98 @@
    U - updateSmurf
    D - deleteSmurf
 */
+const fetchingSmurfs = () => {
+  return {
+    type: actionTypes.FETCHING_SMURFS
+  }
+}
+const fetchSucceeded = (smurfs) => {
+  return {
+    type: actionTypes.FETCH_SUCCEEDED,
+    smurfs: smurfs
+  }
+}
+const fetchFailed = () => {
+  return {
+    type: actionTypes.FETCH_FAILED
+  }
+}
+export const initSmurfs = () => dispatch => {
+  dispatch(fetchingSmurfs())
+  axios.get('').then(res => {
+    dispatch(fetchSucceeded(res.data))
+  }).catch(err => {
+    console.error(err)
+    dispatch(fetchFailed())
+  })
+}
+
+const addingSmurf = () => {
+  return {
+    type: actionTypes.ADDING_SMURF
+  }
+}
+const addSucceeded = (newSmurfs) => {
+  return {
+    type: actionTypes.ADD_SUCCEEDED,
+    smurfs: newSmurfs
+  }
+}
+const addFailed = () => {
+  return {
+    type: actionTypes.ADD_FAILED
+  }
+}
+export const addSmurf = (smurf) => dispatch => {
+  dispatch(addingSmurf());
+  axios.post('', smurf).then(res => {
+    dispatch(addSucceeded(res.data))
+  }).catch(err => {
+    console.error(err);
+    dispatch(addFailed())
+  })
+}
+const updatingSmurfs = () => {
+  return {
+    type: actionTypes.UPDATING_SMURFS
+  }
+}
+const deleteSucceeded = (updatedSmurfs) => {
+  return {
+    type: actionTypes.DELETE_SUCCEEDED,
+    smurfs: updatedSmurfs
+  }
+}
+const deleteFailed = () => {
+  return {
+    type: actionTypes.DELETE_FAILED
+  }
+}
+export const deleteSmurf = (id) => dispatch => {
+  dispatch(updatingSmurfs())
+  axios.delete(`/${id}`).then(res => {
+    dispatch(deleteSucceeded(res.data))
+  }).catch(err => {
+    console.error(err);
+    dispatch(deleteFailed())
+  })
+}
+const updateSucceeded = (updatedSmurfs) => {
+  return {
+    type: actionTypes.UPDATE_SUCCEEDED,
+    smurfs: updatedSmurfs
+  }
+}
+const updateFailed = () => {
+  return {
+    type: actionTypes.UPDATE_FAIL,
+  }
+}
+export const updateSmurf = (id, updatedSmurf) => dispatch => {
+  axios.put(`/${id}`, updatedSmurf).then(res => {
+    dispatch(updateSucceeded(res.data))
+  }).catch(err => {
+    console.error(err)
+    dispatch(updateFailed())
+  })
+}
