@@ -62,6 +62,17 @@ export default (state = initialState, action) => {
         addingSmurf: false,
         error: "Could not add smurf."
       }
+    case actionTypes.DELETE_SUCCEEDED:
+      return {
+        ...state,
+        smurfs: action.smurfs,
+        error: null
+      }
+    case actionTypes.DELETE_FAILED: 
+      return {
+        ...state,
+        error: "Could not delete smurf."
+      }
     default:
       return state;
   }

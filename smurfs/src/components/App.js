@@ -18,6 +18,9 @@ class App extends Component {
     this.smurfName = React.createRef();
     this.smurfAge = React.createRef();
     this.smurfHeight = React.createRef();
+    this.state = {
+      deleteInput: ""
+    }
   }
 
   componentDidMount() {
@@ -36,6 +39,16 @@ class App extends Component {
     this.smurfAge.current.value = '';
     this.smurfHeight.current.value = '';
   }
+  deleteSmurfHandler = async (e) => {
+    e.preventDefault();
+    e.persist();
+    this.setState(prevState => {
+      const smurf = this.props.smurfs.filter(smurf => smurf.name === prevState.deleteInput)[0];
+      const id = smurf !== undefined ? smurf.id : null;
+      id !== null && this.props.onDeleteSmurf(id);
+      return {deleteInput: ''}
+    })
+  }
 
   render() {
     let smurfs = <Spinner/>;
@@ -48,16 +61,27 @@ class App extends Component {
         </div>
       ))
     }
+    let formBody = (
+      <React.Fragment>
+        <input ref={this.smurfName} placeholder="Smurf Name" />
+        <input ref={this.smurfAge} placeholder="Smurf Age"/>
+        <input ref={this.smurfHeight} placeholder="Smurf height"/>
+        <button>Submit</button>
+      </React.Fragment>
+    )
+    if (this.props.adding) {
+      formBody = <Spinner />
+    }
     return (
       <div className="App">
         <div>
             {smurfs}
         </div>
         <form onSubmit={this.addNewSmurf}>
-          <input ref={this.smurfName} placeholder="Smurf Name" />
-          <input ref={this.smurfAge} placeholder="Smurf Age"/>
-          <input ref={this.smurfHeight} placeholder="Smurf height"/>
-          <button>Submit</button>
+          {formBody}
+        </form>
+        <form onSubmit={this.deleteSmurfHandler}>
+          <input value={this.state.deleteInput} onChange={(e) => this.setState({deleteInput: e.target.value})} placeholder="Type Name To Delete"/>
         </form>
       </div>
     );
@@ -67,13 +91,15 @@ class App extends Component {
 const mapStateToProps = state => {
   return {
     smurfs: state.smurfs,
-    fetching: state.fetchingSmurfs
+    fetching: state.fetchingSmurfs,
+    adding: state.addingSmurf
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
     onInitSmurfs: () => dispatch(actions.initSmurfs()),
-    onAddSmurf: (newSmurf) => dispatch(actions.addSmurf(newSmurf))
+    onAddSmurf: (newSmurf) => dispatch(actions.addSmurf(newSmurf)),
+    onDeleteSmurf: (id) => dispatch(actions.deleteSmurf(id))
   }
 }
 

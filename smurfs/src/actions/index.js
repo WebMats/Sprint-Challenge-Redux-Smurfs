@@ -10,6 +10,8 @@ export const actionTypes = {
   ADDING_SMURF: "ADDING_SMURF",
   ADD_SUCCEEDED: "ADD_SUCCEEDED",
   ADD_FAILED: "ADD_FAILED",
+  DELETE_SUCCEEDED: "DELETE_SUCCEEDED",
+  DELETE_FAILED: "DELETE_FAILED"
 }
 
 /*
@@ -71,5 +73,25 @@ export const addSmurf = (smurf) => dispatch => {
   }).catch(err => {
     console.error(err);
     dispatch(addFailed())
+  })
+}
+const deleteSucceeded = (updatedSmurfs) => {
+  return {
+    type: actionTypes.DELETE_SUCCEEDED,
+    smurfs: updatedSmurfs
+  }
+}
+const deleteFailed = () => {
+  return {
+    type: actionTypes.DELETE_FAILED
+  }
+}
+
+export const deleteSmurf = (id) => dispatch => {
+  axios.delete(`/${id}`).then(res => {
+    dispatch(deleteSucceeded(res.data))
+  }).catch(err => {
+    console.error(err);
+    dispatch(deleteFailed())
   })
 }
