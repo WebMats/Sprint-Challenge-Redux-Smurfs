@@ -29,10 +29,16 @@ class App extends Component {
 
   addNewSmurf = (e) => {
     e.preventDefault()
+    const name = this.smurfName.current.value
+    const age = this.smurfAge.current.value
+    const height = this.smurfHeight.current.value
+    if (name === '' || age === '' || height === '') {
+      return;
+    }
     const newSmurf = {
-      name: this.smurfName.current.value,
-      age: this.smurfAge.current.value,
-      height: this.smurfHeight.current.value
+      name: name,
+      age: age,
+      height: height
     }
     this.props.onAddSmurf(newSmurf);
     this.smurfName.current.value = '';
@@ -55,16 +61,16 @@ class App extends Component {
     if (this.props.smurfs.length > 0) {
       smurfs = this.props.smurfs.map((smurf, i) => (
         <div key={i}>
-          <p>{smurf.name}</p>
-          <p>{smurf.age}</p>
-          <p>{smurf.height}</p>
+          <p><strong>Name:</strong> {smurf.name}</p>
+          <p><strong>Age:</strong> {smurf.age}</p>
+          <p><strong>Height:</strong> {smurf.height}</p>
         </div>
       ))
     }
     let formBody = (
       <React.Fragment>
         <input ref={this.smurfName} placeholder="Smurf Name" />
-        <input ref={this.smurfAge} placeholder="Smurf Age"/>
+        <input ref={this.smurfAge} placeholder="Smurf Age" style={{width: "60px"}}/>
         <input ref={this.smurfHeight} placeholder="Smurf height"/>
         <button>Submit</button>
       </React.Fragment>
@@ -74,14 +80,15 @@ class App extends Component {
     }
     return (
       <div className="App">
-        <div>
+        <div className="SmUrFlIsT">
+          <h1 style={{color: "#35a1d3f8"}}>Smurf Village!</h1>
             {smurfs}
         </div>
-        <form onSubmit={this.addNewSmurf}>
+        <form onSubmit={this.addNewSmurf} className="SmUrFlIsTfOrM">
           {formBody}
         </form>
         <form onSubmit={this.deleteSmurfHandler}>
-          <input value={this.state.deleteInput} onChange={(e) => this.setState({deleteInput: e.target.value})} placeholder="Type Name To Delete"/>
+          <input className="DeLeTeInPuT" value={this.state.deleteInput} onChange={(e) => this.setState({deleteInput: e.target.value})} placeholder="Type Name To Delete"/>
         </form>
       </div>
     );
