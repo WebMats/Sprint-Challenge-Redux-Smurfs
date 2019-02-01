@@ -19,7 +19,8 @@ class App extends Component {
     this.smurfAge = React.createRef();
     this.smurfHeight = React.createRef();
     this.state = {
-      deleteInput: ""
+      deleteInput: "",
+      updateId: null
     }
   }
 
@@ -55,12 +56,39 @@ class App extends Component {
       return {deleteInput: ''}
     })
   }
+  setUpdateHandler = (id) => {
+    this.setState(prevState => {
+      if (prevState.updateId !== id) {
+        return {updateId: id}
+      }
+      return {updateId: null}
+    })
+  }
+  updateSmurfHandler = (e) => {
+    e.preventDefault();
+    let smurfToUpdate = {
+      name: this.smurfName.current.value,
+      age: this.smurfAge.current.value,
+      height: this.smurfHeight.current.value
+    }
+    let trimmedSmurf = {};
+    Object.keys(smurfToUpdate).forEach(key => {
+      if (smurfToUpdate[key] !== '') {
+        trimmedSmurf[key] = smurfToUpdate[key];
+      }
+    })
+    this.props.onUpdateSmurf(this.state.updateId, trimmedSmurf);
+    this.smurfName.current.value = '';
+    this.smurfAge.current.value = '';
+    this.smurfHeight.current.value = '';
+  }
 
   render() {
+    const isUpdate = this.state.updateId !== null;
     let smurfs = <Spinner/>;
-    if (this.props.smurfs.length > 0) {
-      smurfs = this.props.smurfs.map((smurf, i) => (
-        <div key={i}>
+    if (this.props.smurfs.length > 0 || !this.props.updating) {
+      smurfs = this.props.smurfs.map(smurf => (
+        <div onClick={() => this.setUpdateHandler(smurf.id)} key={smurf.id} className={this.state.updateId === smurf.id ? "Smurf Update": "Smurf"}>
           <p><strong>Name:</strong> {smurf.name}</p>
           <p><strong>Age:</strong> {smurf.age}</p>
           <p><strong>Height:</strong> {smurf.height}</p>
@@ -72,7 +100,7 @@ class App extends Component {
         <input ref={this.smurfName} placeholder="Smurf Name" />
         <input ref={this.smurfAge} placeholder="Smurf Age" style={{width: "60px"}}/>
         <input ref={this.smurfHeight} placeholder="Smurf height"/>
-        <button>Submit</button>
+        <button>{isUpdate ? "Update" : "Submit"}</button>
       </React.Fragment>
     )
     if (this.props.adding) {
@@ -84,11 +112,15 @@ class App extends Component {
           <h1 style={{color: "#35a1d3f8"}}>Smurf Village!</h1>
             {smurfs}
         </div>
-        <form onSubmit={this.addNewSmurf} className="SmUrFlIsTfOrM">
+        <form onSubmit={isUpdate ? this.updateSmurfHandler : this.addNewSmurf} className="SmUrFlIsTfOrM">
           {formBody}
         </form>
         <form onSubmit={this.deleteSmurfHandler}>
-          <input className="DeLeTeInPuT" value={this.state.deleteInput} onChange={(e) => this.setState({deleteInput: e.target.value})} placeholder="Type Name To Delete"/>
+          <input 
+            className="DeLeTeInPuT" 
+            value={this.state.deleteInput} 
+            onChange={(e) => this.setState({deleteInput: e.target.value})} 
+            placeholder="Type Name To Delete"/>
         </form>
       </div>
     );
@@ -99,14 +131,16 @@ const mapStateToProps = state => {
   return {
     smurfs: state.smurfs,
     fetching: state.fetchingSmurfs,
-    adding: state.addingSmurf
+    adding: state.addingSmurf,
+    updating: state.updatingSmurfs
   }
 }
 const mapDispatchToProps = dispatch => {
   return {
     onInitSmurfs: () => dispatch(actions.initSmurfs()),
     onAddSmurf: (newSmurf) => dispatch(actions.addSmurf(newSmurf)),
-    onDeleteSmurf: (id) => dispatch(actions.deleteSmurf(id))
+    onDeleteSmurf: (id) => dispatch(actions.deleteSmurf(id)),
+    onUpdateSmurf: (id, update) => dispatch(actions.updateSmurf(id, update))
   }
 }
 

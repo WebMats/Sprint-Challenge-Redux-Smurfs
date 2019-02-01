@@ -73,6 +73,23 @@ export default (state = initialState, action) => {
         ...state,
         error: "Could not delete smurf."
       }
+    case actionTypes.UPDATING_SMURFS:
+      return {
+        ...state,
+        updatingSmurfs: true,
+        error: null
+      }
+    case actionTypes.UPDATE_SUCCEEDED:
+      return {
+        ...state,
+        smurfs: action.smurfs,
+        error: null
+      }
+    case actionTypes.UPDATE_FAIL:
+      return {
+        ...state,
+        error: "Could not update smurf."
+      }
     default:
       return state;
   }

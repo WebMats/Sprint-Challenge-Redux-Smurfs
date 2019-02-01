@@ -70,3 +70,10 @@
   transition-duration: .2s;
   cursor: pointer;
 }
+.Smurf {
+  margin: 8px 0;
+  padding: 5px 0;
+}
+.Smurf.Update {
+  background-color: rgb(255, 107, 107);
+}
