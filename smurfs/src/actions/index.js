@@ -4,10 +4,12 @@ import axios from '../axios-smurfs';
   Be sure to export each action type so you can pull it into your reducer
 */
 export const actionTypes = {
-  INIT_SMURFS: "INIT_SMURFS",
   FETCHING_SMURFS: "FETCHING_SMURFS",
   FETCH_SUCCEEDED: "FETCH_SUCCEEDED",
-  FETCH_FAILED: "FETCH_FAILED"
+  FETCH_FAILED: "FETCH_FAILED",
+  ADDING_SMURF: "ADDING_SMURF",
+  ADD_SUCCEEDED: "ADD_SUCCEEDED",
+  ADD_FAILED: "ADD_FAILED",
 }
 
 /*
@@ -43,5 +45,31 @@ export const initSmurfs = () => dispatch => {
   }).catch(err => {
     console.error(err)
     dispatch(fetchFailed())
+  })
+}
+
+const addingSmurf = () => {
+  return {
+    type: actionTypes.ADDING_SMURF
+  }
+}
+const addSucceeded = (newSmurfs) => {
+  return {
+    type: actionTypes.ADD_SUCCEEDED,
+    smurfs: newSmurfs
+  }
+}
+const addFailed = () => {
+  return {
+    type: actionTypes.ADD_FAILED
+  }
+}
+export const addSmurf = (smurf) => dispatch => {
+  dispatch(addingSmurf());
+  axios.post('', smurf).then(res => {
+    dispatch(addSucceeded(res.data))
+  }).catch(err => {
+    console.error(err);
+    dispatch(addFailed())
   })
 }

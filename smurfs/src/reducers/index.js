@@ -43,6 +43,25 @@ export default (state = initialState, action) => {
         fetchingSmurfs: false,
         error: "Could not get smurf data."
       }
+    case actionTypes.ADDING_SMURF:
+      return {
+        ...state,
+        addingSmurf: true,
+        erro: null
+      }
+    case actionTypes.ADD_SUCCEEDED:
+      return {
+        ...state,
+        smurfs: action.smurfs,
+        addingSmurf: false,
+        error: null
+      }
+    case actionTypes.ADD_FAILED:
+      return {
+        ...state,
+        addingSmurf: false,
+        error: "Could not add smurf."
+      }
     default:
       return state;
   }
